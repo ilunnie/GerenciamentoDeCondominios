@@ -1,10 +1,22 @@
+import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
 import { StyleSheet } from "react-native";
 
 var default_theme;
 export default default_theme = StyleSheet.create({
+    text: {
+        color: "black",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+    },
+
     card : {
         display: "flex",
         flexDirection: "row",
+        padding: "10px",
+        borderWidth: "1px",
+        borderRadius: "10px",
+        backgroundColor: "#FAFAFA"
     },
 
     cardLocal : {
@@ -20,12 +32,17 @@ export default default_theme = StyleSheet.create({
     },
 
     cardImage : {
+        width: "20px",
+        height: "20px",
         borderRadius: "50%",
-        borderWidth: "1",
-        borderColor: "black"
+        borderWidth: "1px"
     },
 
     cardNames : {
         marginBottom: "-5px"
     },
+
+    textInput : {
+        color: "black",
+    }
 })

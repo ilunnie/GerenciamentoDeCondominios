@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { styles } from './src/styles/styles';
+import { styles, setTheme } from './src/styles/styles';
 
 //! █▓▒▒░░░PAGES░░░▒▒▓█ !\\
 import Nav from './src/views/Nav';
