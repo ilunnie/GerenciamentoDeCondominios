@@ -21,5 +21,11 @@ export default dark_theme = StyleSheet.create({
 
     textInput : {
         color: "white",
-    }
+        backgroundColor: "#121212",
+        borderColor: "white"
+    },
+
+    icon: {
+        color: "white"
+    },
 })

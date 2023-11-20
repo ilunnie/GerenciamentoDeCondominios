@@ -44,5 +44,13 @@ export default default_theme = StyleSheet.create({
 
     textInput : {
         color: "black",
-    }
+        backgroundColor: "#FAFAFA",
+        borderWidth: "1px",
+        borderColor: "black",
+        padding: "1%"
+    },
+
+    icon: {
+        color: "black"
+    },
 })

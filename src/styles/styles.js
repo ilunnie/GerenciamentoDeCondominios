@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import default_theme from './theme/default'
 import dark_theme from './theme/dark'
 
-var dark_theme_on = Boolean(localStorage.getItem('dark_theme_on'));
+var dark_theme_on = localStorage.getItem('dark_theme_on') == "true" ? true : false;
 
 function Compose(style1, style2) {
     var styles = style1

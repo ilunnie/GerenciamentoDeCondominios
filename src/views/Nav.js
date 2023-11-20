@@ -1,9 +1,13 @@
-import { View, TextInput } from "react-native";
+import { View, TextInput, TouchableOpacity } from "react-native";
 import { useState } from "react";
+import { styles } from "../styles/styles";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import ThemeButton from "../components/ThemeButton";
 import Card from "../components/Card";
 
 export default function Nav(props) {
-    const [search, setSeatch] = useState(String(localStorage.getItem('search')))
+    const [search, setSeatch] = useState(localStorage.getItem('search') ? String(localStorage.getItem('search')) : "")
     const cards = [
         {
             local: {
@@ -55,23 +59,28 @@ export default function Nav(props) {
         }
     ]
 
-    return (
-        <>
-            <View>
-                <TextInput value={search} onChangeText={setSeatch}/>
-            </View>
-            <View style={{ padding: "50px", gap: "15px" }}>
-                {cards.map((card, index) => {
-                    return (
-                        <Card key={index}
-                            condominio={card.local.condominio}
-                            bloco={card.local.bloco}
-                            num={card.local.num}
-                            owner={card.owner}
-                            residents={card.moradores} />
-                    );
-                })}
-            </View>
-        </>
-    );
+    return (<>
+        <ThemeButton />
+        <View style={{ display: "flex", flexDirection: "row", gap: "5px", paddingInline: "50px" }}>
+            <TextInput
+                value={search}
+                onChangeText={(value) => { setSeatch(value); localStorage.setItem('search', value); }}
+                style={{...styles.textInput, marginTop: "10%"}} />
+            <TouchableOpacity style={{ display: "flex", justifyContent: "flex-end" }}>
+                <FontAwesomeIcon icon={faMagnifyingGlass} style={styles.icon} size={20} />
+            </TouchableOpacity>
+        </View>
+        <View style={{ padding: "50px", gap: "15px" }}>
+            {cards.map((card, index) => {
+                return (
+                    <Card key={index}
+                        condominio={card.local.condominio}
+                        bloco={card.local.bloco}
+                        num={card.local.num}
+                        owner={card.owner}
+                        residents={card.moradores} />
+                );
+            })}
+        </View>
+    </>);
 }
