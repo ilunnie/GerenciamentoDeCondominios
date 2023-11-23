@@ -7,6 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserRequest {
     private String identity;
+    private String password;
     private String name;
     private Byte[] image;
     private Boolean isAdm;

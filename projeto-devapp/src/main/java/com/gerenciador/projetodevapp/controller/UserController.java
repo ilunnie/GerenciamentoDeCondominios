@@ -1,7 +1,9 @@
 package com.gerenciador.projetodevapp.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -13,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gerenciador.projetodevapp.config.HashConfiguration;
+import com.gerenciador.projetodevapp.config.JwtConfiguration;
 import com.gerenciador.projetodevapp.model.UserModel;
 import com.gerenciador.projetodevapp.request.ImageRequest;
 import com.gerenciador.projetodevapp.request.LoginRequest;
@@ -29,26 +34,35 @@ public class UserController {
     @GetMapping("")
     public Stream<UserRequest> getAllUser() {
         List<UserModel> listRes = userService.findAll();
-        return listRes.stream().map(user -> new UserRequest(user.getIdentity(), user.getName(), user.getImage(), user.getIsAdm()));
+        return listRes.stream().map(
+                user -> new UserRequest(user.getIdentity(), "*****", user.getName(), user.getImage(), user.getIsAdm()));
     }
 
     @GetMapping("login")
-    public String getUserLogin(@RequestBody LoginRequest request) {
+    public String getUserLogin(@RequestBody LoginRequest request) throws JsonProcessingException {
         Optional<UserModel> user = userService.findById(request.getIdentity());
-        if (user == null) {
-            return "User not founded";
+        if (!user.isPresent()) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", 500);
+            error.put("error", "User not founded");
+            return new ObjectMapper().writeValueAsString(error);
         }
         if (HashConfiguration.compareHash(user.get().getPassword(), request.getPassword())) {
-            
+            return JwtConfiguration.createJwt(user.get());
         }
-        return "Password error";
+        Map<String, Object> error = new HashMap<>();
+        error.put("status", 401);
+        error.put("error", "Password error");
+        return new ObjectMapper().writeValueAsString(error);
     }
 
     @PostMapping("")
-    public void newUser(@RequestBody UserModel newUser) {
-        if(newUser.getIsAdm() == null)
+    public void newUser(@RequestBody UserRequest newUser) {
+        if (newUser.getIsAdm() == null)
             newUser.setIsAdm(false);
-        userService.save(newUser);
+        var password = HashConfiguration.generateHash(newUser.getPassword());
+        userService.save(new UserModel(newUser.getIdentity(), password, newUser.getName(), newUser.getImage(),
+                newUser.getIsAdm()));
     }
 
     @PutMapping("/image")
