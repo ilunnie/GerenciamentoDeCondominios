@@ -8,13 +8,20 @@ import io.jsonwebtoken.SignatureException;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.gerenciador.projetodevapp.model.UserModel;
 import com.gerenciador.projetodevapp.request.JwtBodyRequest;
 import com.google.gson.Gson;
 
 public class JwtConfiguration {
-    private static final String SECRET_KEY = System.getenv("SECRET_KEY");
-    private static final long EXPIRATION_TIME = 86400000 * 7;
+    private static String SECRET_KEY;
+
+    private final static long EXPIRATION_TIME = 86400000 * 7;
+
+    public JwtConfiguration(@Value("{jwt.secret.key}") String secretKey ) {
+        JwtConfiguration.SECRET_KEY = secretKey;
+    }
 
     public static String createJwt(String identity, String name, Boolean isAdm)
     {
@@ -22,7 +29,7 @@ public class JwtConfiguration {
         user.put("identity", identity);
         user.put("name", name);
         user.put("isAdm", isAdm);
-
+        System.out.println("================================= " + SECRET_KEY);
         Date expirationDate = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
 
         String jwt = Jwts.builder()
@@ -39,7 +46,7 @@ public class JwtConfiguration {
         return createJwt(user.getIdentity(), user.getName(), user.getIsAdm());
     }
 
-    public static JwtBodyRequest verifyJwt(String jwt)
+    public JwtBodyRequest verifyJwt(String jwt)
     {
         try {
             Claims claims = Jwts.parser()

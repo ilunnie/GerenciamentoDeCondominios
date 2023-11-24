@@ -47,13 +47,13 @@ public class UserController {
             error.put("error", "User not founded");
             return new ObjectMapper().writeValueAsString(error);
         }
-        if (HashConfiguration.compareHash(user.get().getPassword(), request.getPassword())) {
-            return JwtConfiguration.createJwt(user.get());
+        if (!HashConfiguration.compareHash(user.get().getPassword(), request.getPassword())) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", 401);
+            error.put("error", "Password error");
+            return new ObjectMapper().writeValueAsString(error);
         }
-        Map<String, Object> error = new HashMap<>();
-        error.put("status", 401);
-        error.put("error", "Password error");
-        return new ObjectMapper().writeValueAsString(error);
+        return JwtConfiguration.createJwt(user.get());
     }
 
     @PostMapping("")
