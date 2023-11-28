@@ -56,7 +56,7 @@ export default default_theme = StyleSheet.create({
 
     nextButton: {
         padding: "2%",
-        paddingHorizontal: "3%",
+        paddingHorizontal: "3vw",
         borderWidth: "1px",
         borderColor: "black",
     },

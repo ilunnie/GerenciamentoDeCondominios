@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,7 +32,7 @@ import com.gerenciador.projetodevapp.service.UserService;
 public class UserController {
     @Autowired
     private UserService userService;
-    
+
     private JwtService jwt = new JwtService();
 
     @GetMapping("")
@@ -40,22 +42,22 @@ public class UserController {
                 user -> new UserRequest(user.getIdentity(), "*****", user.getName(), user.getImage(), user.getIsAdm()));
     }
 
-    @GetMapping("login")
-    public String getUserLogin(@RequestBody LoginRequest request) throws JsonProcessingException {
+    @PostMapping("login")
+    public ResponseEntity<?> getUserLogin(@RequestBody LoginRequest request) throws JsonProcessingException {
         Optional<UserModel> user = userService.findById(request.getIdentity());
         if (!user.isPresent()) {
             Map<String, Object> error = new HashMap<>();
             error.put("status", 500);
-            error.put("error", "User not founded");
-            return new ObjectMapper().writeValueAsString(error);
+            error.put("error", "User not found");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
         if (!HashConfiguration.compareHash(user.get().getPassword(), request.getPassword())) {
             Map<String, Object> error = new HashMap<>();
             error.put("status", 401);
             error.put("error", "Password error");
-            return new ObjectMapper().writeValueAsString(error);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
-        return jwt.createJwt(user.get());
+        return ResponseEntity.ok(jwt.createJwt(user.get()));
     }
 
     @PostMapping("")

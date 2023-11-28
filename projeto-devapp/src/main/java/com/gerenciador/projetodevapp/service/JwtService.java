@@ -8,8 +8,6 @@ import io.jsonwebtoken.SignatureException;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import com.gerenciador.projetodevapp.model.UserModel;
@@ -18,7 +16,6 @@ import com.google.gson.Gson;
 
 @Service
 public class JwtService {
-    // @Value("${jwt.secret}")
     private String SECRET_KEY = "senha_de_teste";
 
     private final static long EXPIRATION_TIME = 86400000 * 7;
@@ -47,6 +44,8 @@ public class JwtService {
 
     public JwtBodyRequest verifyJwt(String jwt)
     {
+        if (jwt == null)
+            return null;
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(SECRET_KEY)

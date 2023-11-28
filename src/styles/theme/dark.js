@@ -28,4 +28,8 @@ export default dark_theme = StyleSheet.create({
     icon: {
         color: "white"
     },
+
+    nextButton: {
+        borderColor: "white"
+    }
 })
