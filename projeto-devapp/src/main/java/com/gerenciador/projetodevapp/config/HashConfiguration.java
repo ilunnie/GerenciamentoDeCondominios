@@ -6,6 +6,8 @@ import java.util.Arrays;
 
 public class HashConfiguration {
     public static byte[] generateHash(String input) {
+        if(input == null)
+            return null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             return md.digest(input.getBytes());

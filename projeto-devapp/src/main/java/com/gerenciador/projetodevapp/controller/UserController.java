@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gerenciador.projetodevapp.config.HashConfiguration;
-import com.gerenciador.projetodevapp.config.JwtConfiguration;
 import com.gerenciador.projetodevapp.model.UserModel;
 import com.gerenciador.projetodevapp.request.ImageRequest;
 import com.gerenciador.projetodevapp.request.LoginRequest;
 import com.gerenciador.projetodevapp.request.UserRequest;
+import com.gerenciador.projetodevapp.service.JwtService;
 import com.gerenciador.projetodevapp.service.UserService;
 
 @RestController
@@ -30,6 +30,8 @@ import com.gerenciador.projetodevapp.service.UserService;
 public class UserController {
     @Autowired
     private UserService userService;
+    
+    private JwtService jwt = new JwtService();
 
     @GetMapping("")
     public Stream<UserRequest> getAllUser() {
@@ -53,7 +55,7 @@ public class UserController {
             error.put("error", "Password error");
             return new ObjectMapper().writeValueAsString(error);
         }
-        return JwtConfiguration.createJwt(user.get());
+        return jwt.createJwt(user.get());
     }
 
     @PostMapping("")
@@ -65,7 +67,21 @@ public class UserController {
                 newUser.getIsAdm()));
     }
 
-    @PutMapping("/image")
+    @PutMapping("password")
+    public void uploadPassword(@RequestBody Map<String, Object> body) {
+        String token = (String) body.get("token");
+        String id = jwt.verifyJwt(token).getIdentity();
+
+        Optional<UserModel> search = userService.findById(id);
+        if (search.isPresent()) {
+            UserModel user = search.get();
+            var password = HashConfiguration.generateHash((String) body.get("password"));
+            user.setPassword(password);
+            userService.save(user);
+        }
+    }
+
+    @PutMapping("image")
     public void uploadImage(@RequestBody ImageRequest request) throws IOException {
 
         System.out.println("=====================");

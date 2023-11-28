@@ -53,4 +53,11 @@ export default default_theme = StyleSheet.create({
     icon: {
         color: "black"
     },
+
+    nextButton: {
+        padding: "2%",
+        paddingHorizontal: "3%",
+        borderWidth: "1px",
+        borderColor: "black",
+    },
 })
