@@ -5,7 +5,7 @@ import { styles, setTheme } from '../styles/styles';
 
 export default function ThemeButton(props) {
     return (
-        <View style={{zIndex: "10", position: "absolute", right: "2%", top: "2%"}}>
+        <View style={{zIndex: "10", position: "absolute", right: "3vw", top: "3vh"}}>
             <TouchableOpacity onPress={() => setTheme()}>
                 <FontAwesomeIcon
                     icon={faMoon}

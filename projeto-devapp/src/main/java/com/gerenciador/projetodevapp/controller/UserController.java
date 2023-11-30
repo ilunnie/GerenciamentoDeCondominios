@@ -10,7 +10,9 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gerenciador.projetodevapp.config.HashConfiguration;
 import com.gerenciador.projetodevapp.model.UserModel;
 import com.gerenciador.projetodevapp.request.ImageRequest;
+import com.gerenciador.projetodevapp.request.JwtBodyRequest;
 import com.gerenciador.projetodevapp.request.LoginRequest;
 import com.gerenciador.projetodevapp.request.UserRequest;
 import com.gerenciador.projetodevapp.service.JwtService;
@@ -69,6 +71,30 @@ public class UserController {
                 newUser.getIsAdm()));
     }
 
+    @PutMapping("adm/{id}")
+    public ResponseEntity<?> defineAdm(@RequestBody Map<String, Object> body, @PathVariable String id) {
+        String token = (String) body.get("token");
+        JwtBodyRequest sender = jwt.verifyJwt(token);
+        if (!sender.getIsAdm()) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", 401);
+            error.put("error", "Operation denied");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+
+        Optional<UserModel> search = userService.findById(id);
+        if (search.isPresent()) {
+            UserModel user = search.get();
+            user.setIsAdm(!user.getIsAdm());
+            userService.save(user);
+            return ResponseEntity.ok("Operation performed");
+        }
+        Map<String, Object> error = new HashMap<>();
+        error.put("status", 500);
+        error.put("error", "User not found");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
     @PutMapping("password")
     public void uploadPassword(@RequestBody Map<String, Object> body) {
         String token = (String) body.get("token");
@@ -90,5 +116,23 @@ public class UserController {
         System.out.println(request.getToken());
         System.out.println(request.getImage());
         System.out.println("=====================");
+
+        // ToDo não finalizado
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteUser(@RequestBody Map<String, Object> body, @PathVariable String id) {
+        String token = (String) body.get("token");
+        JwtBodyRequest payload = jwt.verifyJwt(token);
+
+        if (payload != null && payload.getIsAdm() == true) {
+            userService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            Map<String, Object> error = new HashMap<>();
+            error.put("status", HttpStatus.UNAUTHORIZED.value());
+            error.put("error", "Access denied");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
     }
 }

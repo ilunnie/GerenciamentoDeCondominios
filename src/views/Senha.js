@@ -23,8 +23,9 @@ export default function Senha(props) {
                     'Content-Type': 'application/json'
                 }
             });
+            console.log(response.data)
             localStorage.setItem("token", response.data)
-            props.navigation.navigate("Entrar");
+            props.navigation.navigate("Home");
         } catch (error) {
             if (error.response?.data.status == 401) {
                 console.error("Senha incorreta")

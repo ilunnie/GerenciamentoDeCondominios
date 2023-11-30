@@ -15,7 +15,7 @@ public class CondominiumModel {
     private String id;
     private String name;
     private String cep;
-    private String endereco;
+    private String address;
     @DBRef
     private List<BlockModel> blocks;
 }

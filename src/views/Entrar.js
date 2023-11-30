@@ -10,7 +10,7 @@ import ThemeButton from "../components/ThemeButton";
 export default function Entrar(props) {
     verifyToken().then((tokenValido) => {
         if (tokenValido) {
-            props.navigation.navigate("Nav");
+            props.navigation.navigate("Home");
         }
     });
     const [id, setId] = useState("");

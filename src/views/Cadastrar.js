@@ -20,7 +20,7 @@ export default function Cadastrar(props) {
                 name: utils.name
             };
 
-            api.post("user", body, {
+            await api.post("user", body, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -31,7 +31,7 @@ export default function Cadastrar(props) {
                 }
             })
             localStorage.setItem("token", response.data)
-            props.navigation.navigate("Entrar");
+            location.reload()
         } else if (sendPassword) {
             setError(true)
         }

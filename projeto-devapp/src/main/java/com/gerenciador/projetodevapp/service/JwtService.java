@@ -26,10 +26,14 @@ public class JwtService {
         user.put("identity", identity);
         user.put("name", name);
         user.put("isAdm", isAdm);
+
+        Gson gson = new Gson();
+        String userJson = gson.toJson(user);
+
         Date expirationDate = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
 
         String jwt = Jwts.builder()
-                .setSubject(user.toString())
+                .setSubject(userJson)
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
@@ -46,6 +50,7 @@ public class JwtService {
     {
         if (jwt == null)
             return null;
+        
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(SECRET_KEY)
@@ -53,6 +58,7 @@ public class JwtService {
                     .getBody();
 
             Gson gson = new Gson();
+            System.out.println(claims.getSubject());
             return gson.fromJson(claims.getSubject(), JwtBodyRequest.class);
         } catch (SignatureException e) {
             return null;
