@@ -58,7 +58,6 @@ public class JwtService {
                     .getBody();
 
             Gson gson = new Gson();
-            System.out.println(claims.getSubject());
             return gson.fromJson(claims.getSubject(), JwtBodyRequest.class);
         } catch (SignatureException e) {
             return null;

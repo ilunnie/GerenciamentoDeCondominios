@@ -109,8 +109,8 @@ public class HomeController {
 
         List<ApartmentModel> homes = apartments.stream()
                 .filter(apartment -> {
-                    boolean isOwner = apartment.getOwner().getIdentity().equals(id);
-                    boolean isResident = apartment.getResidents().stream()
+                    boolean isOwner = apartment.getOwner() != null && apartment.getOwner().getIdentity().equals(id);
+                    boolean isResident = apartment.getResidents() != null && apartment.getResidents().stream()
                             .anyMatch(resident -> resident.getIdentity().equals(id));
                     return isOwner || isResident;
                 })
